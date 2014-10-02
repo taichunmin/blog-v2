@@ -1,0 +1,8 @@
+.DS_Store
+Makefile
+config.rb
+*.scssc
+
+_cores
+_public
+manual

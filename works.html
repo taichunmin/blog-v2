@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+<html lang="zh-tw" class="han-la">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>taichunmin.idv.tw</title>
+
+    <!-- han -->
+    <link href="Han-2.3.0/han.css" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="bootstrap-3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    	      <style>
+	body { padding-top: 51px; font-family:\5FAE\8EDF\6B63\9ED1\9AD4,Microsoft JhengHei,MingLiU,sans-serif; }
+</style>
+
+	<style>
+		.work-summary .panel-heading img{
+			width: 100%;
+			border-top-left-radius: 4px;
+			border-top-right-radius: 4px;
+			-webkit-border-top-left-radius: 4px;
+			-webkit-border-top-right-radius: 4px;
+			-moz-border-top-left-radius: 4px;
+			-moz-border-top-right-radius: 4px;
+		}
+		.work-summary .panel-heading{
+			width: 100%;
+			padding: 0;
+		}
+		.work-summary .panel-body{
+			background-color: #f5f5f5;
+		}
+		.work-summary .panel-body h4{
+			margin-top: 0;
+		}
+		.background-loader{
+			background-image: url(images/ajax-loader.gif);
+			background-size: 50px 50px;
+			background-repeat: no-repeat;
+			background-position: center center;
+		}
+		.carousel-caption{
+			/* Fallback for web browsers that don't support RGBa */
+			background-color: rgb(0, 0, 0);
+			/* RGBa with 0.6 opacity */
+			background-color: rgba(0, 0, 0, 0.6);
+			/* For IE 5.5 - 7*/
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+			/* For IE 8*/
+			-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+		}
+		.carousel-inner img{
+			margin: 0 auto;
+		}
+		.carousel-indicators{
+			white-space: nowrap;
+		}
+	</style>
+  </head>
+  <body>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-39556213-2', 'auto');
+  ga('require', 'displayfeatures');
+  ga('require', 'linkid', 'linkid.js');
+  ga('send', 'pageview');
+
+</script>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://127.0.0.1/taichunmin.idv.tw/public"><span class="fa fa-home fa-lg"></span> 筆記國度</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="about-me.html"><span class="fa fa-info-circle fa-fw"></span> 關於我</a></li>
+        <li><a href="experiences.html"><span class="fa fa-history fa-fw"></span> 經歷</a></li>
+        <li><a href="skills.html"><span class="fa fa-bar-chart-o fa-rotate-90 fa-fw"></span> 技能</a></li>
+        <li><a href="works.html"><span class="fa fa-file-code-o fa-fw"></span> 作品集</a></li>
+        <li><a href="about-site.html"><span class="fa fa-puzzle-piece fa-fw"></span> 關於本站</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container -->
+</nav>
+
+  <div class="container-fluid">
+  	<div class="row">
+		<div class="jumbotron">
+			<div class="container">
+				<h1><span class="fa fa-file-code-o fa-fw"></span> 作品集</h1>
+				<p class="lead">包含網頁，小工具，程式作業以及其他作品。</p>
+			</div>
+		</div>
+	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row work-summary">
+		<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/中興大學機構典藏0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>中興大學機構典藏</h4>
+			    <p><a href="http://tair.org.tw/" target="_blank"><u>臺灣學術機構典藏系統</u></a>維護與功能新增</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-0">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			    <a href="http://nchuir.lib.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-0">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：中興大學機構典藏</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-0" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-0" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="4"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="5"></li>
+			            <li data-target="#work-carousel-0" data-slide-to="6"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/中興大學機構典藏0.png">
+			              <div class="carousel-caption"><p>中興大學機構典藏 首頁</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏1.png">
+			              <div class="carousel-caption"><p>從校內碩博士論文系統轉檔匯入</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏2.png">
+			              <div class="carousel-caption"><p>從教育部 GRB 系統轉檔匯入</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏3.png">
+			              <div class="carousel-caption"><p>替教師著作排行加上簡易的姓名權威</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏4.png">
+			              <div class="carousel-caption"><p>替系統維護所寫的需多小工具程式</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏5.png">
+			              <div class="carousel-caption"><p>替系統加上 Google Analytics</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學機構典藏6.png">
+			              <div class="carousel-caption"><p>社群網站推薦按鈕，檢視 DOI 紀錄，匯出 EndNote、純文字格式等功能。</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-0" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-0" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			        <a href="http://nchuir.lib.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/個人本體論新聞推薦0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>個人本體論新聞推薦</h4>
+			    <p>大學畢業專題，參加校外比賽榮獲銅牌</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-1">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-1">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：個人本體論新聞推薦</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-1" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-1" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="4"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="5"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="6"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="7"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="8"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="9"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="10"></li>
+			            <li data-target="#work-carousel-1" data-slide-to="11"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/個人本體論新聞推薦0.png">
+			              <div class="carousel-caption"><p>系上畢業專題比賽時的展示頁面<br/>左邊的是專案的簡介，右側是使用 jQueryMobile 所寫的頁面。<br />(Android APP 是後來去參加校外比賽時才寫的)</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦3.png">
+			              <div class="carousel-caption"><p>系上畢業專題比賽入圍決賽的名單</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦1.png">
+			              <div class="carousel-caption"><p>系上畢業專題比賽時所做的海報</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦2.png">
+			              <div class="carousel-caption"><p>jQueryMobile 的登入及註冊頁面</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦5.png">
+			              <div class="carousel-caption"><p>此為新聞推薦功能說明用頁面，詳細列出各項推薦參數及結果。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦6.png">
+			              <div class="carousel-caption"><p>此為瀏覽所有新聞的介面，採用清單呈現。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦4.png">
+			              <div class="carousel-caption"><p>使用 Git 進行程式碼的版本管理，此為 Github 程式的專案截圖。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦7.png">
+			              <div class="carousel-caption"><p>資料庫內所抓取的新聞，此為 HeidiSQL 程式連至資料庫的截圖。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦8.png">
+			              <div class="carousel-caption"><p>此為後來參加校外比賽時所寫的 Android App，該校外比賽榮獲銅牌的佳績。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦10.png">
+			              <div class="carousel-caption"><p>校外比賽時，組員和學長的合照</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦11.png">
+			              <div class="carousel-caption"><p>校外比賽的銅牌獎狀</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/個人本體論新聞推薦9.png">
+			              <div class="carousel-caption"><p>由左到右依序為：<br>推薦的參數設定、將新聞斷詞分析後的結果、Android App 內新聞的瀏覽頁面</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-1" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-1" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="clearfix visible-sm-block"></div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/中興大學DSpace系統0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>中興大學 DSpace 系統</h4>
+			    <p><a href="http://www.dspace.org/" target="_blank"><u>DSpace</u></a>系統建置及遷移 (Migrate)</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-2">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-2">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：中興大學 DSpace 系統</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-2" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-2" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-2" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-2" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-2" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-2" data-slide-to="4"></li>
+			            <li data-target="#work-carousel-2" data-slide-to="5"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/中興大學DSpace系統0.png">
+			              <div class="carousel-caption"><p>中興大學 DSpace 系統首頁</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學DSpace系統1.png">
+			              <div class="carousel-caption"><p>繁體中文翻譯<a href="https://github.com/DSpace/dspace-api-lang/commit/ac0931c1567e541a831fd4ccf55f71ad4c13b7b1">https://github.com/DSpace/dspace-api-lang/commit/ac0931c1567e541a831fd4ccf55f71ad4c13b7b1</a></p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學DSpace系統2.png">
+			              <div class="carousel-caption"><p>繁體中文翻譯<a href="https://github.com/DSpace/dspace-api-lang/commit/ac0931c1567e541a831fd4ccf55f71ad4c13b7b1">https://github.com/DSpace/dspace-api-lang/commit/ac0931c1567e541a831fd4ccf55f71ad4c13b7b1</a></p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學DSpace系統3.png">
+			              <div class="carousel-caption"><p>遷移舊機典系統的工具，匯出成 DSpace 的 Simple Archive Format，以便直接匯入 DSpace 系統。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學DSpace系統4.png">
+			              <div class="carousel-caption"><p>匯入文件時所寫的輔助小程式 (Bash)。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學DSpace系統5.png">
+			              <div class="carousel-caption"><p>總共移轉的資料量</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-2" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-2" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="clearfix hidden-xs hidden-sm"></div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/世界大學網路排名0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>世界大學網路排名</h4>
+			    <p><a href="http://www.webometrics.info/" target="_blank"><u>Ranking Web of Universities</u></a> 輔助工具</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-3">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-3">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：世界大學網路排名</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-3" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-3" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-3" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-3" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-3" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-3" data-slide-to="4"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/世界大學網路排名0.png">
+			              <div class="carousel-caption"><p>世界大學網路排名網站 [<a href="http://zh.wikipedia.org/wiki/%E4%B8%96%E7%95%8C%E5%A4%A7%E5%AD%B8%E7%B6%B2%E8%B7%AF%E6%8E%92%E5%90%8D" target="_blank">維基百科</a>]</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/世界大學網路排名1.png">
+			              <div class="carousel-caption"><p>每天定時抓取各大學機構典藏的數量資料。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/世界大學網路排名2.png">
+			              <div class="carousel-caption"><p>可以用圖表顯示趨勢，追蹤其他學校的機構典藏狀況。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/世界大學網路排名3.png">
+			              <div class="carousel-caption"><p>圖表套件的應用，將滑鼠移動到圖表上可查看詳細數值。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/世界大學網路排名4.png">
+			              <div class="carousel-caption"><p>中興大學的排名</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-3" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-3" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="clearfix visible-sm-block"></div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/中興大學興湖記事0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>中興大學興湖記事</h4>
+			    <p>網站從舊系統遷移至 Joomla 2.5</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-4">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			    <a href="http://archive.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-4">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：中興大學興湖記事</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-4" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-4" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="4"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="5"></li>
+			            <li data-target="#work-carousel-4" data-slide-to="6"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/中興大學興湖記事0.png">
+			              <div class="carousel-caption"><p>舊系統當初是與廠商外包所做，因年久失修，所以決定直接以 Joomla 2.5 重新架設，並且人工遷移所有資料。本圖為新網站的最終成果。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事1.png">
+			              <div class="carousel-caption"><p>於 Joomla 內套用 Timeline JS 製作成大世紀。並稍微修改樣式</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事2.png">
+			              <div class="carousel-caption"><p>於 Joomla 內套用 Timeline JS 製作成歷屆校長，並稍微修改樣式。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事3.png">
+			              <div class="carousel-caption"><p>於網站中嵌入校歌外掛及歌詞</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事4.png">
+			              <div class="carousel-caption"><p>於網站中嵌入 Youtube 影片</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事5.png">
+			              <div class="carousel-caption"><p>將舊有校史書籍放置為電子書可供欣賞。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學興湖記事6.png">
+			              <div class="carousel-caption"><p>校史資料徵集網站製作，內含檔案上傳，最高可上傳高達 2GB 的檔案，簡易後台管理，同意書印製。</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-4" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-4" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			        <a href="http://archive.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/中興大學圖書館0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>中興大學圖書館</h4>
+			    <p>Joomla 1.5 升至 Joomla 3</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-5">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			    <a href="http://newwww.lib.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-5">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：中興大學圖書館</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-5" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-5" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-5" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-5" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-5" data-slide-to="3"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/中興大學圖書館0.png">
+			              <div class="carousel-caption"><p>特別套用最新的 RWD 框架 Bootstrap，此為電腦及平板橫放畫面。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學圖書館1.png">
+			              <div class="carousel-caption"><p>此為平板直放畫面</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學圖書館2.png">
+			              <div class="carousel-caption"><p>此為 iPhone 畫面。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/中興大學圖書館3.png">
+			              <div class="carousel-caption"><p>現有網站的截圖。新網站正在調整中，尚未正式上線。</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-5" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-5" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			        <a href="http://newwww.lib.nchu.edu.tw/" target="_blank" class="btn btn-primary">網站 &nbsp;<span class="glyphicon glyphicon-new-window"></span></a>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+			<div class="clearfix hidden-xs"></div>
+			<div class="col-md-4 col-sm-6">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	<img src="images/works/前瞻無線資訊網路實驗室0.png">
+			  </div>
+			  <div class="panel-body text-center">
+			    <h4>前瞻無線資訊網路實驗室</h4>
+			    <p>與綠能相關的網站 (完整度均不高)</p>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-modal-6">More <span class="glyphicon glyphicon-chevron-right"></span></button>
+			  </div>
+			</div>
+			<div class="modal fade" id="work-modal-6">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">作品集：前瞻無線資訊網路實驗室</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div id="work-carousel-6" class="carousel slide" data-ride="carousel" data-interval="false">
+			          <!-- Indicators -->
+			          <ol class="carousel-indicators">
+			            <li data-target="#work-carousel-6" data-slide-to="0" class="active"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="1"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="2"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="3"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="4"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="5"></li>
+			            <li data-target="#work-carousel-6" data-slide-to="6"></li>
+			          </ol>
+
+			          <!-- Wrapper for slides -->
+			          <div class="carousel-inner">
+			            <div class="item active">
+			              <img src="images/works/前瞻無線資訊網路實驗室0.png">
+			              <div class="carousel-caption"><p>利用歷史用電資料，試算各種電費的價格。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室1.png">
+			              <div class="carousel-caption"><p>使用 Highcharts 可以合併線條說明文字，並且可在電腦和移動設備觀看。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室2.png">
+			              <div class="carousel-caption"><p>電費試算</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室3.png">
+			              <div class="carousel-caption"><p>電量預測系統: 登入頁面。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室4.png">
+			              <div class="carousel-caption"><p>裝置清單，左邊顯示裝置是否成功連線。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室5.png">
+			              <div class="carousel-caption"><p>顯示用電量的歷史紀錄。</p></div>
+			            </div>
+			            <div class="item">
+			              <img src="images/works/前瞻無線資訊網路實驗室6.png">
+			              <div class="carousel-caption"><p>使用 SMA 來預測接下來的用電量，以便關掉一些電器避免超出預算。</p></div>
+			            </div>
+			          </div>
+
+			          <!-- Controls -->
+			          <a class="left carousel-control" href="#work-carousel-6" role="button" data-slide="prev">
+			            <span class="glyphicon glyphicon-chevron-left"></span>
+			          </a>
+			          <a class="right carousel-control" href="#work-carousel-6" role="button" data-slide="next">
+			            <span class="glyphicon glyphicon-chevron-right"></span>
+			          </a>
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-info caption-toggle">開關圖片說明</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+	</div>
+  </div>
+
+  	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="Han-2.3.0/js/han.js"></script>
+    <script src="bootstrap-3.2.0/js/bootstrap.min.js"></script>
+
+	<script>
+		$(function(){
+			$('.work-summary').delegate('.caption-toggle','click',function(){
+				$('.carousel-caption,.carousel-indicators').toggle();
+			});
+		});
+	</script>
+  </body>
+</html>
