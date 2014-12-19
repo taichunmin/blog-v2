@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>火哥大樂透選號機</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+    body{
+      font-family: "微軟正黑體";
+    }
+    table.lottery-input th{
+      padding: 0;
+    }
+    table.lottery-input input{
+      padding: 0;
+      text-align: center;
+      border: 0;
+      box-shadow: none;
+    }
+    #num-table .table>tbody>tr>th{
+      padding-right: 1px;
+      padding-left: 1px;
+    }
+    table.text-center th{
+      text-align: center;
+    }
+    #btn-group-rand-grp{
+      margin-right: 0;
+    }
+    #btn-group-rand-grp>div{
+      padding-right: 0;
+      padding-bottom: 20px;
+    }
+    #lottery-computer th{
+      width: 14.285714%;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>火哥大樂透選號機 <small style="color: #eee">@taichunmin</small></h1>
+      <p>設定區：<button class="btn btn-info btn-xs" id="toggle-panel-info">&nbsp;&nbsp;顯示 / 隱藏&nbsp;&nbsp;</button></p>
+      <div class="panel panel-info" id="lottery-1">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> 前一期大樂透號碼</h3>
+        </div>
+        <table class="table table-bordered lottery-input">
+          <tr>
+            <th><input type="text" class="form-control" value="8"></th>
+            <th><input type="text" class="form-control" value="17"></th>
+            <th><input type="text" class="form-control" value="28"></th>
+            <th><input type="text" class="form-control" value="32"></th>
+            <th><input type="text" class="form-control" value="34"></th>
+            <th><input type="text" class="form-control" value="35"></th>
+            <th><input type="text" class="form-control" value="45"></th>
+          </tr>
+        </table>
+      </div>
+      <div class="panel panel-info" id="lottery-23">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> 前第二、三期大樂透號碼</h3>
+        </div>
+        <table class="table table-bordered lottery-input">
+          <tr>
+            <th><input type="text" class="form-control" value="7"></th>
+            <th><input type="text" class="form-control" value="8"></th>
+            <th><input type="text" class="form-control" value="24"></th>
+            <th><input type="text" class="form-control" value="29"></th>
+            <th><input type="text" class="form-control" value="32"></th>
+            <th><input type="text" class="form-control" value="37"></th>
+            <th><input type="text" class="form-control" value="48"></th>
+          </tr>
+          <tr>
+            <th><input type="text" class="form-control" value="7"></th>
+            <th><input type="text" class="form-control" value="9"></th>
+            <th><input type="text" class="form-control" value="23"></th>
+            <th><input type="text" class="form-control" value="24"></th>
+            <th><input type="text" class="form-control" value="33"></th>
+            <th><input type="text" class="form-control" value="41"></th>
+            <th><input type="text" class="form-control" value="43"></th>
+          </tr>
+        </table>
+      </div>
+      <div class="panel panel-info" id="custom-1">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> 自選號 1</h3>
+        </div>
+        <table class="table table-bordered lottery-input">
+          <tr>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+          </tr>
+        </table>
+      </div>
+      <div class="panel panel-info" id="custom-2">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> 自選號 2</h3>
+        </div>
+        <table class="table table-bordered lottery-input">
+          <tr>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+            <th><input type="text" class="form-control"></th>
+          </tr>
+        </table>
+      </div>
+      <div class="panel panel-default" id="num-table">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-stats"></span> 號碼群組</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered text-center">
+            <tr>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
+            </tr>
+            <tr>
+              <th>11</th>
+              <th>12</th>
+              <th>13</th>
+              <th>14</th>
+              <th>15</th>
+              <th>16</th>
+              <th>17</th>
+              <th>18</th>
+              <th>19</th>
+              <th>20</th>
+            </tr>
+            <tr>
+              <th>21</th>
+              <th>22</th>
+              <th>23</th>
+              <th>24</th>
+              <th>25</th>
+              <th>26</th>
+              <th>27</th>
+              <th>28</th>
+              <th>29</th>
+              <th>30</th>
+            </tr>
+            <tr>
+              <th>31</th>
+              <th>32</th>
+              <th>33</th>
+              <th>34</th>
+              <th>35</th>
+              <th>36</th>
+              <th>37</th>
+              <th>38</th>
+              <th>39</th>
+              <th>40</th>
+            </tr>
+            <tr>
+              <th>41</th>
+              <th>42</th>
+              <th>43</th>
+              <th>44</th>
+              <th>45</th>
+              <th>46</th>
+              <th>47</th>
+              <th>48</th>
+              <th>49</th>
+              <th>&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row" id="btn-group-rand-grp">
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-primary data-num-grp">
+            上期附近 <span class="badge">0</span>
+          </button>
+        </div>
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-success data-num-grp">
+            前三期 <span class="badge">0</span>
+          </button>
+        </div>
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-info data-num-grp">
+            自選號 1 <span class="badge">0</span>
+          </button>
+        </div>
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-warning data-num-grp">
+            自選號 2 <span class="badge">0</span>
+          </button>
+        </div>
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-danger data-num-grp">
+            其他號碼 <span class="badge">7</span>
+          </button>
+        </div>
+        <div class="col-sm-2 col-xs-6">
+          <button class="btn-xs btn-block btn-default" id="btn-rand-lottery">
+            重新選號
+          </button>
+        </div>
+      </div>
+      <div class="panel panel-warning" id="lottery-computer">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <span class="glyphicon glyphicon-fire"></span> 電腦選號
+          </h3>
+        </div>
+        <table class="table table-bordered text-center">
+          <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script>
+      (function($){
+        var num_grp_length = [0,0,0,0,0];
+        var grp_class = ["bg-primary","bg-success","bg-info","bg-warning","bg-danger"];
+        $(function(){
+          $('#toggle-panel-info').click(function(){
+            $('.panel.panel-info').toggle(400);
+          });
+          $('.data-num-grp').click(function(){
+            var max = 7;
+            var $this = $(this);
+            var $num_grps = $('.data-num-grp');
+            var index = $num_grps.index($this);
+            if( num_grp_length[index] <= btn_num_grp_badge($this))
+              return false;
+            btn_num_grp_badge($this, 1);
+            var sum=0;
+            $num_grps.find('.badge').each(function(){
+              sum += parseInt($(this).text(), 10);
+            });
+            var i=0;
+            while(sum>max && i<$num_grps.length) {
+              var $tmp = $num_grps.eq((index+i+1)%$num_grps.length).find('.badge');
+              if(parseInt($tmp.text(), 10) <= 0) {
+                i++;
+                continue;
+              }
+              btn_num_grp_badge($tmp, -1);
+              sum--;
+            }
+          });
+          $('#btn-rand-lottery').click(rand_num);
+          $('.lottery-input').delegate('input', 'change', draw );
+          // console.log(JSON.stringify(get_num_input()));
+          draw();
+        });
+        function btn_num_grp_badge($obj, modify) {
+          if(!$obj.is('.badge'))
+            $obj = $obj.find('.badge');
+          var current = parseInt($obj.text(), 10);
+          if(typeof(modify) === 'undefined')
+            return current;
+          modify = parseInt(modify, 10);
+          $obj.text(current+modify);
+          return current+modify;
+        }
+        function get_num_input() {
+          return {
+            lottery: [
+              get_num_input_2($('#lottery-1')),
+              get_num_input_2($('#lottery-23 tr:eq(0)')),
+              get_num_input_2($('#lottery-23 tr:eq(1)')),
+            ],
+            custom: [
+              get_num_input_2($('#custom-1')),
+              get_num_input_2($('#custom-2')),
+            ]
+          };
+        }
+        function get_num_input_2($obj) { // 給定 tr，返回 input value array
+          if(!$obj.is('tr'))
+            $obj.find('tr');
+          var arr = [];
+          $obj.find('input').each(function(){
+            var tmp = parseInt($(this).val(), 10);
+            if( isNaN(tmp) || tmp < 1 || tmp > 49 )
+              return true;
+            arr.push(tmp-1);
+          });
+          return arr;
+        }
+        function calc_num_grp(input) {
+          if(typeof(input) === 'undefined')
+            input = get_num_input();
+          var num_grp = [], ia=0;
+          for(var i=0; i<49; i++)
+            num_grp[i] = 4; // 其他號碼
+
+          // 上期附近
+          ia = input.lottery[0].length;
+          for(var i=0; i<ia; i++)
+            for(var j=-2; j<3; j++)
+              num_grp[ (input.lottery[0][i]+j) % 49 ] = 0;
+
+          // 前三期
+          for(var i=0; i<3; i++)
+            for(var j=0; j<input.lottery[i].length; j++)
+              num_grp[ input.lottery[i][j] ] = 1;
+
+          // 自選號
+          for(var i=0; i<2; i++)
+            for(var j=0; j<input.custom[i].length; j++)
+              num_grp[ input.custom[i][j] ] = 2+i;
+          return num_grp;
+        }
+        function draw_num_grp(num_grp) {
+          if(typeof(num_grp) === 'undefined')
+            num_grp = calc_num_grp();
+          $num_cels = $('#num-table th');
+          $num_cels.removeClass(grp_class.join(' '));
+          for(var i=0; i<49; i++)
+            $num_cels.eq(i).addClass(grp_class[num_grp[i]]);
+          for(var i=0; i<5; i++)
+            num_grp_length[i] = $num_cels.filter('.'+grp_class[i]).length;
+          // console.log(num_grp_length);
+        }
+        function rand_num() {
+          var grp_amount = [], nums = [];
+          $('.data-num-grp .badge').each(function(){
+            grp_amount.push(parseInt($(this).text(), 10));
+          });
+          for(var i=0; i<5; i++) {
+            grp_num_cels = $('#num-table .'+grp_class[i]).get();
+            for(var j=0; j<grp_amount[i]; j++) {
+              if(grp_num_cels.length===0)
+                break;
+              var rand_index = Math.floor(grp_num_cels.length * Math.random());
+              nums.push( {
+                num: parseInt($(grp_num_cels[ rand_index ]).text(), 10),
+                clas: $(grp_num_cels[ rand_index ]).attr('class')
+              });
+              grp_num_cels.splice(rand_index, 1);
+            }
+          }
+          nums = nums.sort(function(a,b){return b.num-a.num;});
+          $('#lottery-computer th').removeClass(grp_class.join(' '))
+            .each(function(){
+              var tmp = nums.pop();
+              $(this).text(tmp.num).addClass(tmp.clas);
+            });
+        }
+        function draw() {
+          draw_num_grp();
+          rand_num();
+        }
+      })(jQuery);
+    </script>
+  </body>
+</html>
