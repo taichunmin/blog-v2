@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>UVa Problems Fast Links</title>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+	<style>
+		.btnPadding{
+			padding: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>UVa Problems Fast Links (by taichunmin)</h1>
+		<div>&nbsp;</div>
+		<div id="datainput">
+			<div class="form-group">
+				<label class="control-label" for="uvaid">UVa Problem ID</label>
+				<input type="text" name="uvaid" id="uvaid" class="form-control" placeholder="Please Input a UVa Problem ID:">
+			</div>
+		</div>
+		<div>&nbsp;</div>
+		<div id="result" class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 btnPadding" id="res-probid">No Input</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-luckycat"><a target="_blank" class="btn btn-success btn-block result-btn disabled">LuckyCat (zh_TW)</a></div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-luckycatMirror"><a target="_blank" class="btn btn-success btn-block result-btn disabled">LuckyCat Mirror (zh_TW)</a></div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-uva">
+				<form method="POST" target="_blank" action="http://acm.uva.es/local/online_judge/gotosearch_uva.php">
+					<input type="hidden" name="p">
+					<input type="submit" name="goto" value="UVa (en_US)" class="btn btn-success btn-block result-btn" disabled="disabled">
+				</form>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-zerojudge">
+				<form method="post" target="_blank" action="http://zerojudge.tw/Problems">
+					<input type="hidden" name="searchword">
+					<input type="submit" value="Zerojudge" class="btn btn-success btn-block result-btn" disabled="disabled">
+				</form>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-zerojudgeCPE">
+				<form method="post" target="_blank" action="http://140.122.185.166/ZeroJudge/SearchProblem">
+					<input type="hidden" name="problemkeyword">
+					<input type="submit" value="Zerojudge-CPE" class="btn btn-success btn-block result-btn" disabled="disabled">
+				</form>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 btnPadding" id="res-google">
+				<form target="_blank" method="get" action="https://www.google.com.tw/search">
+					<input type="hidden" name="q">
+					<input type="submit" value="Google Search" class="btn btn-success btn-block result-btn" disabled="disabled">
+				</form>
+			</div>
+		</div>
+		<div>&nbsp;</div>
+		<div id="relateLinks" class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 btnPadding">Relative Links</div>
+			<div class="col-lg-2 col-md-3 col-sm-6 btnPadding"><a target="_blank" class="btn btn-info btn-block" href="http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=25">UVa QuickSubmit</a></div>
+			<!-- <div class="col-lg-2 col-md-3 col-sm-6 btnPadding"><a target="_blank" class="btn btn-info btn-block" href=""></a></div>
+			<div class="col-lg-2 col-md-3 col-sm-6 btnPadding"><a target="_blank" class="btn btn-info btn-block" href=""></a></div> -->
+		</div>
+		<script>
+			$(function(){
+				$('#uvaid').on('change blur',function(){
+
+					var uvaid_vaildate = /^\d+$/.test( $(this).val() );
+					$(this).closest('div.form-group').toggleClass('has-error', !uvaid_vaildate)
+					if( !uvaid_vaildate ) return false;
+
+					btnToggleDisable( $('.result-btn'), true);
+					$('#res-probid').text('processing...');
+					var uvaid = $('#uvaid').val();
+
+					// LuckyCat
+					$('#res-luckycat>a').attr('href','http://luckycat.kshs.kh.edu.tw/homework/q'+uvaid+'.htm');
+					btnToggleDisable( $('#res-luckycat .result-btn'), false);
+
+					// LuckyCatMirror
+					$('#res-luckycatMirror>a').attr('href','http://www3.tcgs.tc.edu.tw/~sagit/luckycat/q'+uvaid+'.htm');
+					btnToggleDisable( $('#res-luckycatMirror .result-btn'), false);
+
+					// UVa
+					$('#res-uva input[name=p]').val(uvaid);
+					btnToggleDisable( $('#res-uva .result-btn'), false);
+
+					// Zerojudge
+					$('#res-zerojudge input[name=searchword]').val(uvaid);
+					btnToggleDisable( $('#res-zerojudge .result-btn'), false);
+
+					// ZerojudgeCPE
+					$('#res-zerojudgeCPE input[name=problemkeyword]').val(uvaid);
+					btnToggleDisable( $('#res-zerojudgeCPE .result-btn'), false);
+
+					// Google Search
+					$('#res-google input[name=q]').val('uva '+uvaid);
+					btnToggleDisable( $('#res-google .result-btn'), false);
+
+					// Show Problem ID
+					$('#res-probid').text('UVa '+uvaid);
+				});
+
+				if( $('#uvaid').val() != '' )
+					$('#uvaid').change();
+			});
+
+			function btnToggleDisable($obj, state)
+			{
+				return $.each($obj, function(){
+					$this = $(this);
+						if($this.is('a'))
+						{
+							if( typeof(state) == 'undefined')
+								$this.toggleClass('disabled');
+							else $this.toggleClass('disabled', state);
+						}
+						else if ($this.is('input'))
+						{
+							if( typeof(state) == 'undefined')
+								$this.prop('disabled', !$this.prop('disabled'));
+							else $this.prop('disabled', state);
+						}
+				});
+			}
+		</script>
+	</div>
+</body>
+</html>
