@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>興大資訊社 103 下 ACM 讀書會</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+      * {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif, "微軟正黑體";
+      }
+      #tabpanel-rank th, #tabpanel-rank td{
+        text-align: center;
+      }
+      #tabpanel-rank .cell-name{
+        text-align: left;
+      }
+      #tabpanel-rank .nav{
+        margin-bottom: 3px;
+      }
+      .tmpl{
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>興大資訊社 103 下 ACM 讀書會</h1>
+      <p id="updated"></p>
+
+
+      <div role="tabpanel" id="tabpanel-rank">
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="tmpl"><a href="#" aria-controls="" role="tab" data-toggle="tab"></a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane tmpl" id="">
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title"><i class="glyphicon glyphicon-thumbs-up"></i> <span></span></h3>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-condensed table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th class="cell-no">#</th>
+                      <th></th>
+                      <th class="cell-ac success">AC</th>
+                      <th class="cell-nos warning">SUBs</th>
+                      <th class="cell-recent-ac" colspan="3">Recent AC</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="tmpl">
+                      <td class="cell-no"></td>
+                      <td class="cell-name"><a href="" target="_blank"></a></td>
+                      <td class="cell-ac success">-1</td>
+                      <td class="cell-nos warning">-1</td>
+                      <td class="cell-recent-ac"></td>
+                      <td class="cell-recent-ac"></td>
+                      <td class="cell-recent-ac"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <script>
+      var debug = [];
+      (function($){
+        $(function(){
+          // spreadsheets feeds: https://spreadsheets.google.com/feeds/worksheets/1Qg5PIPiKgufZFsKdbc185FP4DX1k2X_lNlLJXzyAKkY/public/full?alt=json
+          var spreadsheetsId = '1Qg5PIPiKgufZFsKdbc185FP4DX1k2X_lNlLJXzyAKkY';
+
+          $.getJSON('https://spreadsheets.google.com/feeds/worksheets/'+spreadsheetsId+'/public/full?alt=json', function(json){
+            var worksheetsFeed = json.feed;
+            $.each(worksheetsFeed.entry, function(i, worksheet){
+              var listfeedId = null;
+              $.each(worksheet.link, function(j, link){
+                if(link.rel == 'http://schemas.google.com/spreadsheets/2006#listfeed')
+                  listfeedId = link.href.match(/[^/]{30,}\/[^/]+/)[0];
+              });
+              new Gsx(listfeedId, function(ranks){
+                ranks.sort(function(a,b){
+                  if( a.ac != b.ac ) return b.ac - a.ac; // big -> small
+                  if( a.nos != b.nos ) return a.nos - b.nos; // small -> big
+                  return 0;
+                });
+                rander_ranks(worksheet.title['$t'], ranks);
+              });
+            });
+            $('#updated').text('最後更新：' + new Date(worksheetsFeed.updated['$t']).toLocaleString());
+          })
+        });
+
+        function Gsx(gsx_name, gsx_callback) { // Get Google spreadsheets xls data
+          var me = this;
+          me.gsx_name = gsx_name;
+          me.gsx_url = 'https://spreadsheets.google.com/feeds/list/' + gsx_name + '/public/values?alt=json';
+          me.status = false;
+          $.getJSON(me.gsx_url, function(data) {
+            me.data = [];
+            $.each(data.feed.entry, function(ik,iv){
+              var tmp2 = {};
+              $.each(iv, function(jk, jv){
+                var fieldname = jk.match(/gsx\$(.*)$/);
+                if(fieldname != null)
+                  tmp2[ fieldname[1] ] = jv['$t'];
+              });
+              me.data.push(tmp2);
+            });
+            me.updated = new Date(data.feed.updated['$t']);
+            me.status = true;
+            console.log('From %s loaded %d data.', gsx_name, me.data.length);
+            if(typeof(gsx_callback) === "function")
+              gsx_callback.apply(me, [me.data]);
+          });
+        };
+
+        function rander_ranks(title, ranks)
+        {
+          switch(title){
+            case 'ZeroJudge':
+              var conf = {
+                id: 'zerojudge',
+                account_href: function(row){
+                  return 'http://zerojudge.tw/UserStatistic?account=' + encodeURIComponent(row['account']);
+                },
+                recent_ac: function(problemId){
+                  return $($.parseHTML('<a href="http://zerojudge.tw/ShowProblem?problemid=' + encodeURIComponent(problemId) + '" target="_blank"></a>')).text(problemId)[0].outerHTML;
+                },
+              };
+              break;
+            case 'UVa':
+              var conf = {
+                id: 'uva',
+                account_href: function(row){
+                  return 'http://uhunt.felix-halim.net/id/' + encodeURIComponent(row['uid']);
+                },
+                recent_ac: function(obj){
+                  return $($.parseHTML('<a target="_blank" />')).attr('href', 'http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem='+parseInt(obj[0])).text(obj[1])[0].outerHTML;
+                },
+              };
+              break;
+            default:
+              return;
+          }
+
+          var $panetmpl = $('#tabpanel-rank .tab-pane.tmpl');
+          var $tabtmpl = $('#tabpanel-rank li.tmpl');
+
+          // Add Tab
+          var $tab = $tabtmpl.clone(false).removeClass('tmpl');
+          $tab.find('a').attr({
+            href: "#rankpane-"+conf['id'],
+            "aria-controls": 'rankpane-'+conf['id'],
+          }).text(title);
+          $tabtmpl.before($tab);
+
+          // Add pane
+          var $pane = $panetmpl.clone(true).removeClass('tmpl').attr({
+            id: 'rankpane-'+conf['id'],
+          });
+          $pane.find('.panel-title span').text(title + ' 排行榜');
+          var $trtmpl = $pane.find('tr.tmpl');
+
+          $.each(ranks, function(ik, iv){
+            // console.log(iv);
+            var $tr = $trtmpl.clone().removeClass('tmpl');
+            $tr.find('.cell-no').text(ik+1).end()
+              .find('.cell-ac').text(iv['ac']).end()
+              .find('.cell-nos').text(iv['nos']).end()
+              .find('.cell-name>a').text(iv['name']).attr('href', conf['account_href'](iv));
+            try{
+              var recent_acs = $.parseJSON(iv['recent-ac']);
+              $.each(recent_acs, function(i, recent_ac){
+                // console.log(recent_ac);
+                $tr.find('.cell-recent-ac').eq(i).html(conf['recent_ac'](recent_ac));
+              });
+            } catch(e) {console.log(e);}
+            $trtmpl.before($tr);
+          });
+
+          $panetmpl.before($pane);
+          if(0 == $('#tabpanel-rank .nav a[aria-expanded=true]').length)
+            $('#tabpanel-rank .nav a:first').tab('show');
+        }
+      })(jQuery);
+    </script>
+  </body>
+</html>
