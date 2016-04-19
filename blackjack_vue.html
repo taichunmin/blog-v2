@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Black Jack</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+      #btn-control .row{
+        margin-right: 0;
+      }
+      #btn-control .col-xs-4{
+        padding-right: 0;
+      }
+      .poker {
+        width: 71px;
+        height: 96px;
+        background-image: url(http://taichunmin.idv.tw/images/cards_jfitz.png);
+        background-clip: border-box;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: 15px;
+        border-radius: 2px;
+      }
+      .blackjack-board{
+        padding-bottom: 0;
+        padding-right: 5px;
+        min-height: 126px;
+      }
+      .poker-ca{background-position: -1px 0px; }   /* 梅花 1 */
+      .poker-c2{background-position: -73px 0px; }  /* 梅花 2 */
+      .poker-c3{background-position: -145px 0px; } /* 梅花 3 */
+      .poker-c4{background-position: -217px 0px; } /* 梅花 4 */
+      .poker-c5{background-position: -289px 0px; } /* 梅花 5 */
+      .poker-c6{background-position: -361px 0px; } /* 梅花 6 */
+      .poker-c7{background-position: -433px 0px; } /* 梅花 7 */
+      .poker-c8{background-position: -505px 0px; } /* 梅花 8 */
+      .poker-c9{background-position: -577px 0px; } /* 梅花 9 */
+      .poker-ct{background-position: -649px 0px; } /* 梅花 10 */
+      .poker-cj{background-position: -721px 0px; } /* 梅花 11 */
+      .poker-cq{background-position: -793px 0px; } /* 梅花 12 */
+      .poker-ck{background-position: -865px 0px; } /* 梅花 13 */
+      .poker-sa{background-position: -1px -96px; }   /* 黑桃 1 */
+      .poker-s2{background-position: -73px -96px; }  /* 黑桃 2 */
+      .poker-s3{background-position: -145px -96px; } /* 黑桃 3 */
+      .poker-s4{background-position: -217px -96px; } /* 黑桃 4 */
+      .poker-s5{background-position: -289px -96px; } /* 黑桃 5 */
+      .poker-s6{background-position: -361px -96px; } /* 黑桃 6 */
+      .poker-s7{background-position: -433px -96px; } /* 黑桃 7 */
+      .poker-s8{background-position: -505px -96px; } /* 黑桃 8 */
+      .poker-s9{background-position: -577px -96px; } /* 黑桃 9 */
+      .poker-st{background-position: -649px -96px; } /* 黑桃 10 */
+      .poker-sj{background-position: -721px -96px; } /* 黑桃 11 */
+      .poker-sq{background-position: -793px -96px; } /* 黑桃 12 */
+      .poker-sk{background-position: -865px -96px; } /* 黑桃 13 */
+      .poker-ha{background-position: -1px -192px; }   /* 紅心 1 */
+      .poker-h2{background-position: -73px -192px; }  /* 紅心 2 */
+      .poker-h3{background-position: -145px -192px; } /* 紅心 3 */
+      .poker-h4{background-position: -217px -192px; } /* 紅心 4 */
+      .poker-h5{background-position: -289px -192px; } /* 紅心 5 */
+      .poker-h6{background-position: -361px -192px; } /* 紅心 6 */
+      .poker-h7{background-position: -433px -192px; } /* 紅心 7 */
+      .poker-h8{background-position: -505px -192px; } /* 紅心 8 */
+      .poker-h9{background-position: -577px -192px; } /* 紅心 9 */
+      .poker-ht{background-position: -649px -192px; } /* 紅心 10 */
+      .poker-hj{background-position: -721px -192px; } /* 紅心 11 */
+      .poker-hq{background-position: -793px -192px; } /* 紅心 12 */
+      .poker-hk{background-position: -865px -192px; } /* 紅心 13 */
+      .poker-da{background-position: -1px -288px; }   /* 方塊 1 */
+      .poker-d2{background-position: -73px -288px; }  /* 方塊 2 */
+      .poker-d3{background-position: -145px -288px; } /* 方塊 3 */
+      .poker-d4{background-position: -217px -288px; } /* 方塊 4 */
+      .poker-d5{background-position: -289px -288px; } /* 方塊 5 */
+      .poker-d6{background-position: -361px -288px; } /* 方塊 6 */
+      .poker-d7{background-position: -433px -288px; } /* 方塊 7 */
+      .poker-d8{background-position: -505px -288px; } /* 方塊 8 */
+      .poker-d9{background-position: -577px -288px; } /* 方塊 9 */
+      .poker-dt{background-position: -649px -288px; } /* 方塊 10 */
+      .poker-dj{background-position: -721px -288px; } /* 方塊 11 */
+      .poker-dq{background-position: -793px -288px; } /* 方塊 12 */
+      .poker-dk{background-position: -865px -288px; } /* 方塊 13 */
+      .poker-back{background-image: url(http://taichunmin.idv.tw/images/card_jfitz_back.png);} /* 卡背 */
+      .poker-back-heartstone{
+        background-image: url(http://taichunmin.idv.tw/images/cardback-rankedladder.png);
+        background-size: 100% 100%;
+      } /* 卡背 */
+    </style>
+  </head>
+  <body>
+    <div class="container" id="app">
+      <h1>Black Jack <small>Score: {{ score }}</small></h1>
+      <div class="alert alert-{{ msgColor ? msgColor : 'info' }}" role="alert">{{{ msg ? msg : 'No message.' }}}</div>
+      <div class="row" style="margin-bottom: 15px">
+        <div id="btn-control" class="col-xs-12 col-sm-8 col-md-6 col-lg-5">
+          <div class="row">
+            <div class="col-xs-4">
+              <button class="btn btn-success btn-block" @click="hit">Hit</button>
+            </div>
+            <div class="col-xs-4">
+              <button class="btn btn-primary btn-block" @click="stand">Stand</button>
+            </div>
+            <div class="col-xs-4">
+              <button class="btn btn-danger btn-block" @click="deal">Deal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <player-component v-for="player in players" :player="player" :poker-back-class="pokerBackClass" :playing="playing" :cards="player.cards"></player-component>
+    </div>
+
+    <template id="player-template">
+      <div class="panel {{ player.panelClass }}" id="dealer">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="{{ player.iconClass }}"></span> {{ player.name }} <span class="badge">{{ playing && player.conceal ? "?" : val }}</span></h3>
+        </div>
+        <div class="panel-body blackjack-board">
+          <div v-for="card in cards" class="poker {{ (playing && player.conceal && $index == 0) ? pokerBackClass : 'poker-'+card }}"></div>
+        </div>
+      </div>
+    </template>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.21/vue.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+      var SUITS = ["c", "s", "h", "d"];
+      var RANKS = ["a", "2", "3", "4", "5", "6", "7", "8", "9", "t", "j", "q", "k"];
+      var VALUES = {a:1, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "t":10, "j":10, "q":10, "k":10};
+
+      function shuffle(v) {
+        for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
+        return v;
+      };
+      function Deck() {
+        this.cards = [];
+        for( var i in SUITS )
+          for( var j in RANKS )
+            this.cards.push( SUITS[i] + RANKS[j] );
+        return this;
+      };
+      Deck.prototype = {
+        toString: function() {
+          return "Deck contains " + this.cards.join(" ");
+        },
+        shuffle: function() {
+          this.cards = shuffle(this.cards);
+          return this;
+        },
+        deal_card: function() {
+          return this.cards.pop();
+        },
+      };
+
+      Vue.component('player-component', {
+        props: ['player', 'pokerBackClass', 'playing', 'cards'],
+        template: '#player-template',
+        computed: {
+          val: function() {
+            // compute player cards value
+            var value = 0, hasAce = false;
+            for( var i in this.cards ) {
+              var card = this.cards[i];
+              if( card[1] == 'a' )
+                hasAce = true;
+              value += VALUES[card[1]];
+            }
+            if(hasAce && value<=11)
+              value += 10;
+            if(value < 21 && this.cards.length>=5)
+              return 21;
+            return value;
+          },
+        },
+      });
+
+      var game = new Vue({
+        el: '#app',
+        data: {
+          score: 0,
+          msg: '',
+          msgColor: '',
+          playing: false,
+          deck: [], // 抽牌堆
+          pokerBackClass: 'poker-back-heartstone',
+          players: [{
+            name: 'Player',
+            panelClass: 'panel-success',
+            iconClass: 'glyphicon glyphicon-user',
+            conceal: false,
+            cards: ['ca', 'c2', 'c3', 'c4', 'c5'],
+          }, {
+            name: 'Dealer',
+            panelClass: 'panel-danger',
+            iconClass: 'glyphicon glyphicon-fire',
+            conceal: true,
+            cards: ['ca', 'c2', 'c3', 'c4', 'c5'],
+          }],
+        },
+        methods: {
+          // 補牌
+          hit: function(e) {
+            this.findMeNpc();
+            if(this.playing) {
+              if(this.me.val <= 21)
+                this.me.cards.push(this.deck.deal_card());
+              if(this.me.val > 21)
+                this.setMsg("<strong>Player</strong> have busted", "warning");
+            } else {
+              this.setMsg("Click <strong>Deal</strong> button to restart.");
+            }
+          },
+
+          // 停牌
+          stand: function(e) {
+            this.findMeNpc();
+            if(!this.playing) {
+              this.setMsg("Click <strong>Deal</strong> button to restart.");
+              return;
+            }
+            if(this.me.val <= 21)
+              while(this.npc.val < 17 || this.npc.val < Math.min(this.me.val, 21))
+                this.npc.cards.push(this.deck.deal_card());
+            this.playing = false;
+            var player_win = ( this.me.val <= 21 && this.npc.val < this.me.val || this.npc.val > 21 );
+            if(player_win) {
+              this.score += 1;
+              this.setMsg('<strong>Player</strong> wins.', 'success');
+            } else {
+              this.score -= 1;
+              this.setMsg('<strong>Dealer</strong> wins.', 'danger');
+            }
+          },
+
+          // 開啟新局
+          deal: function(e) {
+            if(this.playing) {
+              this.score -= 1;
+              this.setMsg("<strong>Player</strong> lose. <strong>Hit</strong> or <strong>stand</strong>?", "success");
+            } else {
+              this.playing = true;
+              this.setMsg("<strong>Hit</strong> or <strong>stand</strong>?");
+            }
+            this.deck = new Deck().shuffle();
+            for(var i in this.players)
+              this.players[i].cards = [];
+            for(var i=0; i<2; i++)
+              for(var j in this.players)
+                this.players[j].cards.push( this.deck.deal_card() );
+          },
+
+          setMsg: function(msg, color) {
+            this.msg = msg;
+            this.color = typeof(color) !== "undefined" ? color : '';
+          },
+
+          findMeNpc: function() {
+            this.me = this.$children[0];
+            this.npc = this.$children[1];
+          },
+        },
+        created: function() {
+          this.deal();
+        },
+      });
+    </script>
+  </body>
+</html>
