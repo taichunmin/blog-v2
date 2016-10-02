@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Skycarpenter Punch</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+      body {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif,"微軟正黑體";
+      }
+      .btn{
+        letter-spacing: 2px;
+      }
+      #showErr{
+        margin-top: 20px;
+      }
+      .punch-table {
+        width: 100%;
+        max-width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+        overflow: hidden;
+      }
+      .punch-table>tbody>tr>td, .punch-table>tbody>tr>th {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+        vertical-align: middle;
+      }
+      .blockui{
+        font-weight: bold;
+        font-size: 20px;
+        margin: 20px 0;
+      }
+      #loading{
+        display: inline-block;
+        margin-bottom: 0;
+        width: 30%;
+        min-width: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>冒險時刻表 <small id="dateToday"></small></h1>
+      <div style="margin: 0 -8px">
+        <table class="punch-table">
+          <tr>
+            <td style="width: 33%">
+              <button class="btn btn-danger btn-lg btn-block" id="google-login"><i class="fa fa-google fa-fw"></i> 登入</button>
+              <button class="btn btn-info btn-lg btn-block" id="google-logout" style="display: none"><i class="fa fa-google"></i> 登出</button>
+            </td>
+            <td colspan="2" id="userEmail">請登入</td>
+          </tr>
+          <tr>
+            <td>
+              <button class="btn btn-primary btn-lg btn-block btn-punch" id="punch-in" disabled><i class="fa fa-sign-in fa-fw"></i> 上班</button>
+            </td>
+            <th id="punchInCell" class="text-center" style="width: 20%"></th>
+            <td id="punchInCellData" class="text-center" style="width: 47%"></td>
+          </tr>
+          <tr>
+            <td>
+              <button class="btn btn-success btn-lg btn-block btn-punch" id="punch-out" disabled><i class="fa fa-sign-out fa-fw"></i> 下班</button>
+            </td>
+            <th id="punchOutCell" class="text-center"></th>
+            <td id="punchOutCellData" class="text-center"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="alert alert-danger" role="alert" style="display: none" id="showErr"></div>
+      <div class="alert alert-info" role="alert" id="loading" style="display: none"><i class="fa fa-spinner fa-pulse fa-fw"></i> 載入中…</div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment-with-locales.min.js"></script>
+    <script type="text/javascript">
+      'use strict';
+      var CLIENT_ID = '380601973526-gi37mp88kgruon8oqup6vieidg125313.apps.googleusercontent.com';
+      var SCOPES = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "profile",
+        "email"
+      ];
+      var spreadsheetId = '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q';
+      var auth2, name, email, dateStart, dateToday, punchCell = [], punchCellData = [], names = [];
+      (function($){
+        $(function(){
+          // $.blockUI.defaults.message = '<div class="blockui"><i class="fa fa-spinner fa-pulse fa-fw"></i> 載入中…</div>';
+          $.blockUI.defaults.message = $('#loading');
+          $.blockUI.defaults.css = {
+            padding: 0,
+            margin: 0,
+            width: '100%',
+            top: '40%',
+            textAlign: 'center',
+            cursor: 'wait'
+          };
+          moment.locale("zh-tw");
+          dateToday = moment().startOf('day');
+          $('#dateToday').text(dateToday.format('YYYY/M/D'));
+          $.blockUI();
+          // 登入
+          $('#google-login').click(function(){
+            auth2.signIn();
+          });
+          // 登出
+          $('#google-logout').click(function(){
+            auth2.signOut();
+            location.reload();
+          });
+          $('.btn-punch').click(function(){
+            $.blockUI();
+            // 按下上下班按鈕
+            var now = moment();
+            gapi.client.sheets.spreadsheets.values.update({
+              spreadsheetId: spreadsheetId,
+              range: [$(this).data('cell')],
+              valueInputOption: 'RAW',
+              values: [[ (now.hour() < 12? '上午 ' : '下午 ') + now.format('h:mm:ss') ]],
+            }).then(punchTableReload);
+          });
+        });
+      })(jQuery);
+      function gapi_onload() {
+        gapi.load('client:auth2', initAuth);
+        gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4', null, initAuth);
+      }
+      function initAuth()
+      {
+        if(!gapi.auth2 || !gapi.client.sheets)
+          return;
+        gapi.auth2.init({
+          'client_id': CLIENT_ID,
+          'scope': SCOPES.join(' '),
+        }).then(function(){
+          auth2 = gapi.auth2.getAuthInstance();
+          auth2.isSignedIn.listen(updateSigninStatus);
+          auth2.currentUser.listen(handleGoogleUser);
+          updateSigninStatus(auth2.isSignedIn.get());
+          handleGoogleUser(auth2.currentUser.get());
+        });
+      }
+      function updateSigninStatus(isSignedIn) {
+        var $loginBtn = $('#google-login'), $logoutBtn = $('#google-logout');
+        if (isSignedIn) {
+          $loginBtn.hide();
+          $logoutBtn.show();
+        } else {
+          $loginBtn.show();
+          $logoutBtn.hide();
+          $('.btn-punch').attr('disabled', 'disabled');
+        }
+      }
+      function handleGoogleUser(user)
+      {
+        try {
+          if(!user.isSignedIn()) {
+            $('#userEmail').text('請登入');
+            $.unblockUI();
+            return;
+          }
+          // if(user.getHostedDomain() !== 'skycarpenter.com')
+          //  throw Error('您的網域錯誤: ' + user.getHostedDomain());
+          var $loginBtn = $('#google-login'), $logoutBtn = $('#google-logout');
+          var BasicProfile = user.getBasicProfile();
+          name = BasicProfile.getName();
+          email = BasicProfile.getEmail();
+          $('#userEmail').text( name + ' <' + email + '>');
+          punchTableReload();
+        } catch(e) {
+          showErr('Error: ' + e.message);
+        }
+      }
+      function punchTableReload()
+      {
+        try {
+          $.blockUI();
+          gapi.client.sheets.spreadsheets.values.batchGet({
+            spreadsheetId: spreadsheetId,
+            ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
+          }).then(function(response) {
+            var ranges = response.result.valueRanges;
+            // for names
+            names = ranges[0].values[0].filter(function(val){return val.length>0});
+            if(!names.length)
+              throw Error('找不到 names');
+            // for start date
+            dateStart = moment(ranges[1].values[0][0], 'YYYY/M/D');
+            if(!dateStart.isValid())
+              throw Error('dateStart 錯誤: ' + ranges[1].values[0][0]);
+            var diffDays = (dateToday - dateStart) / 864e5;
+            punchCell = [
+              int2ref(names.indexOf(name) * 3 + 2) + (diffDays+3),
+              int2ref(names.indexOf(name) * 3 + 3) + (diffDays+3),
+            ];
+            // console.log(punchCell);
+            $('.btn-punch').removeAttr('disabled');
+            $('#punch-in').data('cell', punchCell[0]);
+            $('#punch-out').data('cell', punchCell[1]);
+            $('#punchInCell').text(punchCell[0]);
+            $('#punchOutCell').text(punchCell[1]);
+            // get punch cell data
+            gapi.client.sheets.spreadsheets.values.batchGet({
+              spreadsheetId: spreadsheetId,
+              ranges: ["'冒險時刻'!"+punchCell[0], "'冒險時刻'!"+punchCell[1]],
+            }).then(function(response){
+              var ranges = response.result.valueRanges;
+              // console.log(ranges);
+              for(var i=0; i<2; i++) {
+                if(!ranges[i].values)
+                  punchCellData[i] = '空';
+                else punchCellData[i] = ranges[i].values[0][0] || '空';
+              }
+              $('#punchInCellData').text(punchCellData[0]);
+              $('#punchOutCellData').text(punchCellData[1]);
+              $.unblockUI();
+            }, function(response) {
+              throw Error(response.result.error.message);
+            });
+          }, function(response) {
+            throw Error(response.result.error.message);
+          });
+        } catch(e) {
+          showErr('Error: ' + e.message);
+          $.unblockUI();
+        }
+      }
+      function showErr(error) {
+        if(!error) {
+          $('#showErr').hide();
+        } else {
+          $('#showErr').html(error).show();
+        }
+      }
+      function int2ref(num)
+      {
+        var ref = '';
+        while(num > 0) {
+          num--;
+          ref = String.fromCharCode(65 + num%26) + ref;
+          num = Math.floor(num/26);
+        }
+        return ref;
+      }
+    </script>
+    <script src="https://apis.google.com/js/client.js">
+    </script>
+  </body>
+</html>
