@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taichunmin Translate TTS</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    body { padding-bottom: 50px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">文字轉語音</a>
+      </div>
+    </div><!-- /.container-fluid -->
+  </nav>
+  <div class="jumbotron" id="app">
+    <div class="container" style="padding-top: 30px">
+      <form>
+        <div class="form-group">
+          <label for="inputSentence">文字</label>
+          <input type="text" class="form-control" id="inputSentence" v-model="sentence">
+        </div>
+        <div class="form-group">
+          <label for="shortUrl">短網址</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="shortUrl" v-model="shortUrl" readonly>
+            <span class="input-group-btn">
+              <button class="btn btn-default btn-clipboard" type="button" data-clipboard-target="#shortUrl"><i class="fa fa-clipboard" aria-hidden="true"></i> 複製</button>
+            </span>
+          </div><!-- /input-group -->
+        </div>
+        <button type="button" class="btn btn-success" @click="speak"><i class="glyphicon glyphicon-play"></i> 試聽</button>
+        <button type="button" class="btn btn-primary" @click="getShortUrl"><i class="glyphicon glyphicon-link"></i> 產生短網址</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.8/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.0.3/vue-resource.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.15/clipboard.min.js"></script>
+  <script type="text/javascript">
+    let vm = new Vue({
+      el: '#app',
+      data() {
+        return {
+          sentence: '',
+          shortUrl: '',
+        };
+      },
+      methods: {
+        speak() {
+          speechSynthesis.speak(new SpeechSynthesisUtterance(this.sentence));
+        },
+        getShortUrl() {
+          // location.href
+          this.$http.post(
+            'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD_1TQHImBtwZr7mWxKOdH7z4-B8zt-6Iw',
+            JSON.stringify({
+              "longUrl": location.href,
+            })).then(function(response){
+              // success
+              console.log(response);
+              let res = response.body;
+              this.shortUrl = res.id;
+            }, function(response){
+              // error
+              console.error(response);
+            });
+        },
+      },
+      watch: {
+        sentence() {
+          window.history.pushState("", "", location.pathname + '#' + encodeURIComponent(this.sentence));
+        }
+      },
+      mounted() {
+        new Clipboard('.btn-clipboard');
+        if(location.hash) {
+          this.sentence = decodeURIComponent(location.hash.slice(1));
+          this.speak();
+        }
+      },
+    });
+  </script>
+</body>
+</html>
