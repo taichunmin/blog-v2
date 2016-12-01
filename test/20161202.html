@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <a href="https://www.facebook.com/groups/616281401885574/permalink/650561861790861/" target="_blank">原貼文網址</a><br>
+    Name: <input type="text" v-model="name">
+    <button type="button" @click="say(name)">Say</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.3/vue.min.js"></script>
+  <script>
+    "use strict";
+
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        name: '',
+      },
+      methods: {
+        say(str) {
+          console.log('Hello, ' + str);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
