@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery Chosen for Vue 2</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="chosen-bootstrap.css">
+</head>
+<body>
+  <div class="container" id="app">
+    <form @submit.prevent>
+      <div class="form-group">
+        <label>ID Alphabet</label>
+        <select-chosen v-model="chosen" :options="options"placeholder="選擇一個選項..."></select-chosen>
+      </div>
+      <div class="form-group">
+        <label>所選項目</label>
+        <p class="form-control-static" v-if="chosen">{{chosen + ': ' + options[chosen]}}</p>
+      </div>
+    </form>
+    <a href="https://github.com/taichunmin/taichunmin.github.io/tree/master/test/vue2-jquery-chosen" class="btn btn-success" target="_blank">GitHub Source</a>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- vue-chosen.js Require jQuery and Vue -->
+  <script src="vue-chosen.js"></script>
+
+  <script type="text/javascript">
+    'use strict';
+
+    var vm = new Vue({
+      el: '#app',
+      data() {
+        return {
+          options: {
+            A: '臺北市',
+            B: '臺中市',
+            C: '基隆市',
+            D: '臺南市',
+            E: '高雄市',
+            F: '新北市',
+            G: '宜蘭縣',
+            H: '桃園市',
+            I: '嘉義市',
+            J: '新竹縣',
+            K: '苗栗縣',
+            M: '南投縣',
+            N: '彰化縣',
+            O: '新竹市',
+            P: '雲林縣',
+            Q: '嘉義縣',
+            T: '屏東縣',
+            U: '花蓮縣',
+            V: '臺東縣',
+            W: '金門縣',
+            X: '澎湖縣',
+            Z: '連江縣',
+            L: '臺中縣',
+            R: '臺南縣',
+            S: '高雄縣',
+            Y: '陽明山管理局',
+          },
+          chosen: '',
+        };
+      },
+    });
+  </script>
+</body>
+</html>
