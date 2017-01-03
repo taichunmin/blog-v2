@@ -127,6 +127,10 @@
             location.reload();
           });
           $('.btn-punch').click(function(){
+            let $this = $(this);
+            if($this.closest('tr').find(':eq(-1)').text() !== '空')
+              if(!confirm('已經打卡過了，確定覆蓋？'))
+                return;
             $.blockUI();
             // 按下上下班按鈕
             var now = moment();
