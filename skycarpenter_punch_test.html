@@ -53,33 +53,36 @@
         width: 30%;
         min-width: 150px;
       }
+      [v-cloak] {
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>冒險時刻表 <small id="dateToday"></small></h1>
+    <div class="container" id="app" v-cloak @beforeUpdate="loading(1)" @updated="loading(-1)">
+      <h1>冒險時刻表 <small>{{ today }}</small></h1>
       <div style="margin: 0 -8px">
         <table class="punch-table">
           <tr>
             <td style="width: 33%">
-              <button class="btn btn-danger btn-lg btn-block" id="google-login"><i class="fa fa-google fa-fw"></i> 登入</button>
-              <button class="btn btn-info btn-lg btn-block" id="google-logout" style="display: none"><i class="fa fa-google"></i> 登出</button>
+              <button class="btn btn-danger btn-lg btn-block" @click="googleLogin" v-if="!google.isSignedIn"><i class="fa fa-google fa-fw"></i> 登入</button>
+              <button class="btn btn-info btn-lg btn-block" @click="googleLogout" v-else><i class="fa fa-google"></i> 登出</button>
             </td>
-            <td colspan="2" id="userEmail">請登入</td>
+            <td colspan="2">{{ google.isSignedIn ? (google.name + ' <' + google.email + '>') : '請登入' }}</td>
           </tr>
-          <tr>
+          <tr v-if="punchRange.length">
             <td>
-              <button class="btn btn-primary btn-lg btn-block btn-punch" id="punch-in" disabled><i class="fa fa-sign-in fa-fw"></i> 上班</button>
+              <button class="btn btn-primary btn-lg btn-block" @click="punch(0)"><i class="fa fa-sign-in fa-fw"></i> 上班</button>
             </td>
-            <th id="punchInCell" class="text-center" style="width: 20%"></th>
-            <td id="punchInCellData" class="text-center" style="width: 47%"></td>
+            <th class="text-center" style="width: 20%">{{ punchRange[0] || '' }}</th>
+            <td class="text-center" style="width: 47%">{{ spreadsheet.punch[0] || '空' }}</td>
           </tr>
-          <tr>
+          <tr v-if="punchRange.length">
             <td>
-              <button class="btn btn-success btn-lg btn-block btn-punch" id="punch-out" disabled><i class="fa fa-sign-out fa-fw"></i> 下班</button>
+              <button class="btn btn-success btn-lg btn-block" @click="punch(1)"><i class="fa fa-sign-out fa-fw"></i> 下班</button>
             </td>
-            <th id="punchOutCell" class="text-center"></th>
-            <td id="punchOutCellData" class="text-center"></td>
+            <th class="text-center">{{ punchRange[1] || '' }}</th>
+            <td class="text-center">{{ spreadsheet.punch[1] || '空' }}</td>
           </tr>
         </table>
       </div>
@@ -91,19 +94,189 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script type="text/javascript">
       'use strict';
-      var CLIENT_ID = '380601973526-gi37mp88kgruon8oqup6vieidg125313.apps.googleusercontent.com';
-      var SCOPES = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "profile",
-        "email"
-      ];
-      var spreadsheetId = '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q';
-      var auth2, name, email, dateStart, dateToday, punchCell = [], punchCellData = [], names = [];
+
+      let vm = new Vue({
+        el: '#app',
+        data() {
+          return {
+            google: {
+              clientId: '380601973526-gi37mp88kgruon8oqup6vieidg125313.apps.googleusercontent.com',
+              scopes: [
+                "https://www.googleapis.com/auth/spreadsheets",
+                "profile",
+                "email"
+              ],
+              auth2: null,
+              name: null,
+              email: null,
+              isSignedIn: false,
+            },
+            date: {
+              start: null,
+              today: null,
+            },
+            spreadsheet: {
+              id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q',
+              punch: ['', ''], // 上班, 下班
+              names: [],
+            },
+            loadingDepth: 0,
+          };
+        },
+        computed: {
+          today() {
+            return this.date.today.format('YYYY/M/D');
+          },
+          punchRange() {
+            if(!this.spreadsheet.names.length || !this.date.start.isValid())
+              return [];
+            let diffDays = (this.date.today - this.date.start) / 864e5 + 3;
+            let ref = this.spreadsheet.names.indexOf(this.google.name) * 3 + 2;
+            return [
+              this.int2ref(ref) + diffDays,
+              this.int2ref(ref+1) + diffDays,
+            ];
+          },
+        },
+        created() {
+          moment.locale("zh-tw");
+          this.date.today = moment().startOf('day');
+        },
+        methods: {
+          loading(diff) {
+            let newLoadingDepth = this.loadingDepth + (diff || 0);
+            // console.log('diff =', diff, 'loading =', newLoadingDepth);
+            if(this.loadingDepth < 1 && newLoadingDepth > 0)
+              $.blockUI();
+            else if(this.loadingDepth > 0 && newLoadingDepth < 1)
+              $.unblockUI();
+            this.loadingDepth = newLoadingDepth;
+            return this;
+          },
+          googleOnload() {
+            this.loading(1);
+            gapi.load('client:auth2', this.googleInitAuth);
+            gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4', null, this.googleInitAuth);
+            return this;
+          },
+          googleInitAuth() {
+            if(!gapi.auth2 || !gapi.client.sheets)
+              return;
+            gapi.auth2.init({
+              'client_id': this.google.clientId,
+              'scope': this.google.scopes.join(' '),
+            }).then(function(){
+              this.google.auth2 = gapi.auth2.getAuthInstance();
+              this.google.auth2.isSignedIn.listen(this.googleUpdateSigninStatus);
+              this.google.auth2.currentUser.listen(this.googleHandleUser);
+              this.googleUpdateSigninStatus(this.google.auth2.isSignedIn.get());
+              this.googleHandleUser(this.google.auth2.currentUser.get());
+              this.loading(-1);
+            }.bind(this));
+          },
+          googleLogin() {
+            this.google.auth2.signIn();
+            return this;
+          },
+          googleLogout() {
+            this.google.auth2.signOut();
+            location.reload();
+            return this;
+          },
+          googleUpdateSigninStatus(isSignedIn) {
+            this.google.isSignedIn = isSignedIn;
+          },
+          googleHandleUser(user) {
+            try {
+              this.loading(1);
+              if(!user.isSignedIn()) {
+                this.loading(-1);
+                return;
+              }
+              // if(user.getHostedDomain() !== 'skycarpenter.com')
+              //  throw Error('您的網域錯誤: ' + user.getHostedDomain());
+              let BasicProfile = user.getBasicProfile();
+              this.google.name = BasicProfile.getName();
+              this.google.email = BasicProfile.getEmail();
+              this.punchTableReload();
+              this.loading(-1);
+            } catch(e) {
+              this.error = e.message;
+            }
+          },
+          punchTableReload() {
+            try {
+              this.loading(1);
+              gapi.client.sheets.spreadsheets.values.batchGet({
+                spreadsheetId: this.spreadsheet.id,
+                ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
+              }).then(function(response) {
+                var ranges = response.result.valueRanges;
+
+                this.spreadsheet.names = ranges[0].values[0].filter(function(val){return val.length>0});
+                this.date.start = moment(ranges[1].values[0][0], 'YYYY/M/D');
+
+                if(this.punchRange.length == 0)
+                  return this;
+
+                // get punch cell data
+                gapi.client.sheets.spreadsheets.values.batchGet({
+                  spreadsheetId: this.spreadsheet.id,
+                  ranges: ["'冒險時刻'!"+this.punchRange[0], "'冒險時刻'!"+this.punchRange[1]],
+                }).then(function(response){
+                  var ranges = response.result.valueRanges;
+                  // console.log(ranges);
+                  for(var i=0; i<2; i++)
+                    this.$set(this.spreadsheet.punch, i, _.get(ranges[i].values, [0, 0], ''));
+                  this.loading(-1);
+                }.bind(this), function(response) {
+                  throw Error(response.result.error.message);
+                });
+              }.bind(this), function(response) {
+                throw Error(response.result.error.message);
+              });
+            } catch(e) {
+              this.error = 'Error: ' + e.message;
+              this.loading(-1);
+            }
+          },
+          punch(i) {
+            if(this.spreadsheet.punch[i] && !confirm('已經打卡過了，確定覆蓋？'))
+              return this;
+            this.loading(1);
+            let now = moment();
+            gapi.client.sheets.spreadsheets.values.update({
+              spreadsheetId: this.spreadsheet.id,
+              range: [this.punchRange[i]],
+              valueInputOption: 'RAW',
+              values: [[ (now.hour() < 12? '上午 ' : '下午 ') + now.format('h:mm:ss') ]],
+            }).then(function() {
+              this.punchTableReload();
+              this.loading(-1);
+            }.bind(this));
+          },
+          int2ref(num) {
+            var ref = '';
+            while(num > 0) {
+              num--;
+              ref = String.fromCharCode(65 + num%26) + ref;
+              num = Math.floor(num/26);
+            }
+            return ref;
+          },
+        },
+      });
+
+      function gapi_onload() {
+        vm.googleOnload();
+      }
+
       (function($){
         $(function(){
-          // $.blockUI.defaults.message = '<div class="blockui"><i class="fa fa-spinner fa-pulse fa-fw"></i> 載入中…</div>';
           $.blockUI.defaults.message = $('#loading');
           $.blockUI.defaults.css = {
             padding: 0,
@@ -113,153 +286,10 @@
             textAlign: 'center',
             cursor: 'wait'
           };
-          moment.locale("zh-tw");
-          dateToday = moment().startOf('day');
-          $('#dateToday').text(dateToday.format('YYYY/M/D'));
-          $.blockUI();
-          // 登入
-          $('#google-login').click(function(){
-            auth2.signIn();
-          });
-          // 登出
-          $('#google-logout').click(function(){
-            auth2.signOut();
-            location.reload();
-          });
-          $('.btn-punch').click(function(){
-            $.blockUI();
-            // 按下上下班按鈕
-            var now = moment();
-            gapi.client.sheets.spreadsheets.values.update({
-              spreadsheetId: spreadsheetId,
-              range: [$(this).data('cell')],
-              valueInputOption: 'RAW',
-              values: [[ (now.hour() < 12? '上午 ' : '下午 ') + now.format('h:mm:ss') ]],
-            }).then(punchTableReload);
-          });
+          $.blockUI.defaults.fadeIn = 0;
+          $.blockUI.defaults.fadeOut = 0;
         });
       })(jQuery);
-      function gapi_onload() {
-        gapi.load('client:auth2', initAuth);
-        gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4', null, initAuth);
-      }
-      function initAuth()
-      {
-        if(!gapi.auth2 || !gapi.client.sheets)
-          return;
-        gapi.auth2.init({
-          'client_id': CLIENT_ID,
-          'scope': SCOPES.join(' '),
-        }).then(function(){
-          auth2 = gapi.auth2.getAuthInstance();
-          auth2.isSignedIn.listen(updateSigninStatus);
-          auth2.currentUser.listen(handleGoogleUser);
-          updateSigninStatus(auth2.isSignedIn.get());
-          handleGoogleUser(auth2.currentUser.get());
-        });
-      }
-      function updateSigninStatus(isSignedIn) {
-        var $loginBtn = $('#google-login'), $logoutBtn = $('#google-logout');
-        if (isSignedIn) {
-          $loginBtn.hide();
-          $logoutBtn.show();
-        } else {
-          $loginBtn.show();
-          $logoutBtn.hide();
-          $('.btn-punch').attr('disabled', 'disabled');
-        }
-      }
-      function handleGoogleUser(user)
-      {
-        try {
-          if(!user.isSignedIn()) {
-            $('#userEmail').text('請登入');
-            $.unblockUI();
-            return;
-          }
-          // if(user.getHostedDomain() !== 'skycarpenter.com')
-          //  throw Error('您的網域錯誤: ' + user.getHostedDomain());
-          var $loginBtn = $('#google-login'), $logoutBtn = $('#google-logout');
-          var BasicProfile = user.getBasicProfile();
-          name = BasicProfile.getName();
-          email = BasicProfile.getEmail();
-          $('#userEmail').text( name + ' <' + email + '>');
-          punchTableReload();
-        } catch(e) {
-          showErr('Error: ' + e.message);
-        }
-      }
-      function punchTableReload()
-      {
-        try {
-          $.blockUI();
-          gapi.client.sheets.spreadsheets.values.batchGet({
-            spreadsheetId: spreadsheetId,
-            ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
-          }).then(function(response) {
-            var ranges = response.result.valueRanges;
-            // for names
-            names = ranges[0].values[0].filter(function(val){return val.length>0});
-            if(!names.length)
-              throw Error('找不到 names');
-            // for start date
-            dateStart = moment(ranges[1].values[0][0], 'YYYY/M/D');
-            if(!dateStart.isValid())
-              throw Error('dateStart 錯誤: ' + ranges[1].values[0][0]);
-            var diffDays = (dateToday - dateStart) / 864e5;
-            punchCell = [
-              int2ref(names.indexOf(name) * 3 + 2) + (diffDays+3),
-              int2ref(names.indexOf(name) * 3 + 3) + (diffDays+3),
-            ];
-            // console.log(punchCell);
-            $('.btn-punch').removeAttr('disabled');
-            $('#punch-in').data('cell', punchCell[0]);
-            $('#punch-out').data('cell', punchCell[1]);
-            $('#punchInCell').text(punchCell[0]);
-            $('#punchOutCell').text(punchCell[1]);
-            // get punch cell data
-            gapi.client.sheets.spreadsheets.values.batchGet({
-              spreadsheetId: spreadsheetId,
-              ranges: ["'冒險時刻'!"+punchCell[0], "'冒險時刻'!"+punchCell[1]],
-            }).then(function(response){
-              var ranges = response.result.valueRanges;
-              // console.log(ranges);
-              for(var i=0; i<2; i++) {
-                if(!ranges[i].values)
-                  punchCellData[i] = '空';
-                else punchCellData[i] = ranges[i].values[0][0] || '空';
-              }
-              $('#punchInCellData').text(punchCellData[0]);
-              $('#punchOutCellData').text(punchCellData[1]);
-              $.unblockUI();
-            }, function(response) {
-              throw Error(response.result.error.message);
-            });
-          }, function(response) {
-            throw Error(response.result.error.message);
-          });
-        } catch(e) {
-          showErr('Error: ' + e.message);
-          $.unblockUI();
-        }
-      }
-      function showErr(error) {
-        if(!error) {
-          $('#showErr').hide();
-        } else {
-          $('#showErr').html(error).show();
-        }
-      }
-      function int2ref(num)
-      {
-        var ref = '';
-        while(num > 0) {
-          num--;
-          ref = String.fromCharCode(65 + num%26) + ref;
-          num = Math.floor(num/26);
-        }
-        return ref;
-      }
     </script>
     <script src="https://apis.google.com/js/client.js">
     </script>
