@@ -56,6 +56,17 @@
       [v-cloak] {
         display: none;
       }
+      #errors {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        position: fixed;
+        z-index: 1029;
+        margin-bottom: 0;
+      }
+      #errors > ul {
+        padding-left: 20px;
+      }
     </style>
   </head>
   <body>
@@ -86,7 +97,12 @@
           </tr>
         </table>
       </div>
-      <div class="alert alert-danger" role="alert" style="display: none" id="showErr"></div>
+      <div class="alert alert-danger" role="alert" v-if="errors.length" id="errors">
+        <button type="button" class="close" @click="errors = []"><span aria-hidden="true">&times;</span></button>
+        <ul>
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+      </div>
       <div class="alert alert-info" role="alert" id="loading" style="display: none"><i class="fa fa-spinner fa-pulse fa-fw"></i> 載入中…</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
@@ -120,11 +136,13 @@
               today: null,
             },
             spreadsheet: {
-              id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q',
+              id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q', // test
+              // id: '1vd4u_xjKUeiSiunoUSIRkWaAtDV2wbyFWg8CTHJWsFY', // prod
               punch: ['', ''], // 上班, 下班
               names: [],
             },
             loadingDepth: 0,
+            errors: [],
           };
         },
         computed: {
@@ -197,52 +215,48 @@
                 this.loading(-1);
                 return;
               }
-              // if(user.getHostedDomain() !== 'skycarpenter.com')
-              //  throw Error('您的網域錯誤: ' + user.getHostedDomain());
               let BasicProfile = user.getBasicProfile();
               this.google.name = BasicProfile.getName();
               this.google.email = BasicProfile.getEmail();
               this.punchTableReload();
               this.loading(-1);
             } catch(e) {
-              this.error = e.message;
+              this.errors.push(e.message);
+              this.loading(-1);
             }
           },
           punchTableReload() {
-            try {
-              this.loading(1);
+            this.loading(1);
+            gapi.client.sheets.spreadsheets.values.batchGet({
+              spreadsheetId: this.spreadsheet.id,
+              ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
+            }).then(function(response) {
+              var ranges = response.result.valueRanges;
+
+              this.spreadsheet.names = ranges[0].values[0].filter(function(val){return val.length>0});
+              this.date.start = moment(ranges[1].values[0][0], 'YYYY/M/D');
+
+              if(this.punchRange.length == 0)
+                return this;
+
+              // get punch cell data
               gapi.client.sheets.spreadsheets.values.batchGet({
                 spreadsheetId: this.spreadsheet.id,
-                ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
-              }).then(function(response) {
+                ranges: ["'冒險時刻'!"+this.punchRange[0], "'冒險時刻'!"+this.punchRange[1]],
+              }).then(function(response){
                 var ranges = response.result.valueRanges;
-
-                this.spreadsheet.names = ranges[0].values[0].filter(function(val){return val.length>0});
-                this.date.start = moment(ranges[1].values[0][0], 'YYYY/M/D');
-
-                if(this.punchRange.length == 0)
-                  return this;
-
-                // get punch cell data
-                gapi.client.sheets.spreadsheets.values.batchGet({
-                  spreadsheetId: this.spreadsheet.id,
-                  ranges: ["'冒險時刻'!"+this.punchRange[0], "'冒險時刻'!"+this.punchRange[1]],
-                }).then(function(response){
-                  var ranges = response.result.valueRanges;
-                  // console.log(ranges);
-                  for(var i=0; i<2; i++)
-                    this.$set(this.spreadsheet.punch, i, _.get(ranges[i].values, [0, 0], ''));
-                  this.loading(-1);
-                }.bind(this), function(response) {
-                  throw Error(response.result.error.message);
-                });
-              }.bind(this), function(response) {
-                throw Error(response.result.error.message);
-              });
-            } catch(e) {
-              this.error = 'Error: ' + e.message;
+                // console.log(ranges);
+                for(var i=0; i<2; i++)
+                  this.$set(this.spreadsheet.punch, i, _.get(ranges[i].values, [0, 0], ''));
+                this.loading(-1);
+              }.bind(this), function(response) { // error
+                this.errors.push('無法寫入冒險時刻表: ' + response.result.error.message);
+                this.loading(-1);
+              }.bind(this));
+            }.bind(this), function(response) { // error
+              this.errors.push('無法讀取冒險時刻表: ' + response.result.error.message);
               this.loading(-1);
-            }
+            }.bind(this));
           },
           punch(i) {
             if(this.spreadsheet.punch[i] && !confirm('已經打卡過了，確定覆蓋？'))
