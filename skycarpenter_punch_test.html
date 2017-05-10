@@ -71,29 +71,33 @@
   </head>
   <body>
     <div class="container" id="app" v-cloak @beforeUpdate="loading(1)" @updated="loading(-1)">
-      <h1>冒險時刻表 <small>{{ today }}</small></h1>
+      <h1><a target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + spreadsheet.id + '/edit'">冒險時刻表</a> <small>{{ today }}</small></h1>
       <div style="margin: 0 -8px">
         <table class="punch-table">
           <tr>
+            <td colspan="2" class="text-center">{{ google.isSignedIn ? (google.name + ' <' + google.email + '>') : '請登入' }}</td>
             <td style="width: 33%">
               <button class="btn btn-danger btn-lg btn-block" @click="googleLogin" v-if="!google.isSignedIn"><i class="fa fa-google fa-fw"></i> 登入</button>
               <button class="btn btn-info btn-lg btn-block" @click="googleLogout" v-else><i class="fa fa-google"></i> 登出</button>
             </td>
-            <td colspan="2">{{ google.isSignedIn ? (google.name + ' <' + google.email + '>') : '請登入' }}</td>
           </tr>
           <tr v-if="punchRange.length">
+            <th class="text-center" style="width: 20%">{{ punchRange[0] || '' }}</th>
+            <td class="text-center" style="width: 47%">{{ spreadsheet.punch[0] || '空' }}</td>
             <td>
               <button class="btn btn-primary btn-lg btn-block" @click="punch(0)"><i class="fa fa-sign-in fa-fw"></i> 上班</button>
             </td>
-            <th class="text-center" style="width: 20%">{{ punchRange[0] || '' }}</th>
-            <td class="text-center" style="width: 47%">{{ spreadsheet.punch[0] || '空' }}</td>
           </tr>
           <tr v-if="punchRange.length">
+            <th class="text-center">{{ punchRange[1] || '' }}</th>
+            <td class="text-center">{{ spreadsheet.punch[1] || '空' }}</td>
             <td>
               <button class="btn btn-success btn-lg btn-block" @click="punch(1)"><i class="fa fa-sign-out fa-fw"></i> 下班</button>
             </td>
-            <th class="text-center">{{ punchRange[1] || '' }}</th>
-            <td class="text-center">{{ spreadsheet.punch[1] || '空' }}</td>
+          </tr>
+          <tr v-if="punchRange.length">
+            <td class="text-center" colspan="2">{{ offWorkHint }}</td>
+            <td><button class="btn btn-link btn-lg btn-block disabled">{{ (date.now.hour() < 12? '上午 ' : '下午 ') + date.now.format('h:mm:ss') }}</button></td>
           </tr>
         </table>
       </div>
@@ -105,16 +109,14 @@
       </div>
       <div class="alert alert-info" role="alert" id="loading" style="display: none"><i class="fa fa-spinner fa-pulse fa-fw"></i> 載入中…</div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment-with-locales.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script type="text/javascript">
       'use strict';
-
       let vm = new Vue({
         el: '#app',
         data() {
@@ -133,7 +135,7 @@
             },
             date: {
               start: null,
-              today: null,
+              now: moment(),
             },
             spreadsheet: {
               id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q', // test
@@ -147,12 +149,23 @@
         },
         computed: {
           today() {
-            return this.date.today.format('YYYY/M/D');
+            return this.date.now.format('YYYY/M/D');
+          },
+          offWorkHint() {
+            let punchIn = this.spreadsheet.punch[0];
+            let punchOut = this.spreadsheet.punch[1];
+            if (!punchIn) return '還沒上班打卡喔！';
+            if (punchOut) return '';
+            let dateOffWork = moment(punchIn, 'A hh:mm:ss').add(8, 'h');
+            if (punchIn[0] === '上') dateOffWork.add(90, 'm');
+            if (dateOffWork > this.date.now)
+              return '預計於 ' + (dateOffWork.hour() < 12? '上午 ' : '下午 ') + dateOffWork.format('h:mm:ss') + ' 可以打卡下班。';
+            else return '已經可以下班囉！';
           },
           punchRange() {
             if(!this.spreadsheet.names.length || !this.date.start.isValid())
               return [];
-            let diffDays = (this.date.today - this.date.start) / 864e5 + 3;
+            let diffDays = ~~((this.date.now - this.date.start) / 864e5) + 3;
             let ref = this.spreadsheet.names.indexOf(this.google.name) * 3 + 2;
             return [
               this.int2ref(ref) + diffDays,
@@ -160,9 +173,11 @@
             ];
           },
         },
-        created() {
+        mounted() {
           moment.locale("zh-tw");
-          this.date.today = moment().startOf('day');
+          window.setInterval(() => {
+            this.date.now = moment()
+          }, 1000)
         },
         methods: {
           loading(diff) {
@@ -232,13 +247,10 @@
               ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
             }).then(function(response) {
               var ranges = response.result.valueRanges;
-
               this.spreadsheet.names = ranges[0].values[0].filter(function(val){return val.length>0});
               this.date.start = moment(ranges[1].values[0][0], 'YYYY/M/D');
-
               if(this.punchRange.length == 0)
                 return this;
-
               // get punch cell data
               gapi.client.sheets.spreadsheets.values.batchGet({
                 spreadsheetId: this.spreadsheet.id,
@@ -284,11 +296,9 @@
           },
         },
       });
-
       function gapi_onload() {
         vm.googleOnload();
       }
-
       (function($){
         $(function(){
           $.blockUI.defaults.message = $('#loading');
