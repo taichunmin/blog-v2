@@ -97,7 +97,7 @@
           </tr>
           <tr v-if="punchRange.length">
             <td class="text-center" colspan="2">{{ offWorkHint }}</td>
-            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px;">{{ (date.now.hour() < 12? '上午 ' : '下午 ') + date.now.format('h:mm:ss') }}</button></td>
+            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px; padding: 10px 0">{{ (date.now.hour() < 12? '上午 ' : '下午 ') + date.now.format('h:mm:ss') }}</button></td>
           </tr>
         </table>
       </div>
