@@ -159,7 +159,7 @@
             let dateOffWork = moment(punchIn, 'A hh:mm:ss').add(8, 'h');
             if (punchIn[0] === '上') dateOffWork.add(90, 'm');
             if (dateOffWork > this.date.now)
-              return '預計於 ' + dateOffWork.fromNow() + ' 可以打卡下班。';
+              return '預計於 ' + dateOffWork.from(this.date.now) + ' 可以打卡下班。';
             else return '已經可以下班囉！';
           },
           punchRange() {
