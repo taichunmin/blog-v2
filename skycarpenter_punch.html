@@ -20,12 +20,12 @@
 
     <style type="text/css">
       body {
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif,"微軟正黑體";
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif, "微軟正黑體";
       }
-      .btn{
+      .btn {
         letter-spacing: 2px;
       }
-      #showErr{
+      #showErr {
         margin-top: 20px;
       }
       .punch-table {
@@ -35,19 +35,20 @@
         border-collapse: collapse;
         overflow: hidden;
       }
-      .punch-table>tbody>tr>td, .punch-table>tbody>tr>th {
+      .punch-table>tbody>tr>td,
+      .punch-table>tbody>tr>th {
         padding: 8px;
         line-height: 1.42857143;
         vertical-align: top;
         border-top: 1px solid #ddd;
         vertical-align: middle;
       }
-      .blockui{
+      .blockui {
         font-weight: bold;
         font-size: 20px;
         margin: 20px 0;
       }
-      #loading{
+      #loading {
         display: inline-block;
         margin-bottom: 0;
         width: 30%;
@@ -64,7 +65,7 @@
         z-index: 1029;
         margin-bottom: 0;
       }
-      #errors > ul {
+      #errors>ul {
         padding-left: 20px;
       }
     </style>
@@ -75,7 +76,7 @@
       <div style="margin: 0 -8px">
         <table class="punch-table">
           <tr>
-            <td colspan="2" class="text-center">{{ google.isSignedIn ? (google.name + ' <' + google.email + '>') : '請登入' }}</td>
+            <td colspan="2" class="text-center">{{ google.isSignedIn ? (google.name + ' &lt;' + google.email + '>') : '請登入' }}</td>
             <td style="width: 33%">
               <button class="btn btn-danger btn-lg btn-block" @click="googleLogin" v-if="!google.isSignedIn"><i class="fa fa-google fa-fw"></i> 登入</button>
               <button class="btn btn-info btn-lg btn-block" @click="googleLogout" v-else><i class="fa fa-google"></i> 登出</button>
@@ -97,7 +98,7 @@
           </tr>
           <tr v-if="punchRange.length">
             <td class="text-center" colspan="2">{{ offWorkHint }}</td>
-            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px; padding: 10px 0">{{ (date.now.hour() < 12? '上午 ' : '下午 ') + date.now.format('h:mm:ss') }}</button></td>
+            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px; padding: 10px 0">{{ formatTime(date.now) }}</button></td>
           </tr>
         </table>
       </div>
@@ -112,9 +113,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
     <script type="text/javascript">
       'use strict';
       let vm = new Vue({
@@ -138,7 +139,7 @@
               now: moment(),
             },
             spreadsheet: {
-              // id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q', // test
+              // id: '1ymCPf3RPPFnuSSsvEL6fq2hQXosxdDPuSYQk4r2LhI4', // test
               id: '1vd4u_xjKUeiSiunoUSIRkWaAtDV2wbyFWg8CTHJWsFY', // prod
               punch: ['', ''], // 上班, 下班
               names: [],
@@ -159,33 +160,42 @@
             let dateOffWork = moment(punchIn, 'A hh:mm:ss').add(8, 'h');
             if (punchIn[0] === '上') dateOffWork.add(90, 'm');
             if (dateOffWork > this.date.now)
-              return '預計於 ' + dateOffWork.from(this.date.now) + ' 可以打卡下班。';
+              return '大約 ' + dateOffWork.from(this.date.now) + '可以下班';
             else return '已經可以下班囉！';
           },
           punchRange() {
-            if(!this.spreadsheet.names.length || !this.date.start.isValid())
+            if (!this.spreadsheet.names.length || !this.date.start.isValid())
               return [];
             let diffDays = ~~((this.date.now - this.date.start) / 864e5) + 3;
             let ref = this.spreadsheet.names.indexOf(this.google.name) * 3 + 2;
             return [
               this.int2ref(ref) + diffDays,
-              this.int2ref(ref+1) + diffDays,
+              this.int2ref(ref + 1) + diffDays,
             ];
           },
         },
         mounted() {
           moment.locale("zh-tw");
+          moment.relativeTimeThreshold('s', 60);
+          moment.relativeTimeThreshold('m', 60);
+          moment.relativeTimeThreshold('h', 24);
+          moment.relativeTimeThreshold('ss', -1);
+          moment.updateLocale('zh-tw', {
+            relativeTime: {
+              ss: '%d 秒'
+            }
+          });
           window.setInterval(() => {
             this.date.now = moment()
-          }, 1000)
+          }, 1000);
         },
         methods: {
           loading(diff) {
             let newLoadingDepth = this.loadingDepth + (diff || 0);
             // console.log('diff =', diff, 'loading =', newLoadingDepth);
-            if(this.loadingDepth < 1 && newLoadingDepth > 0)
+            if (this.loadingDepth < 1 && newLoadingDepth > 0)
               $.blockUI();
-            else if(this.loadingDepth > 0 && newLoadingDepth < 1)
+            else if (this.loadingDepth > 0 && newLoadingDepth < 1)
               $.unblockUI();
             this.loadingDepth = newLoadingDepth;
             return this;
@@ -197,12 +207,12 @@
             return this;
           },
           googleInitAuth() {
-            if(!gapi.auth2 || !gapi.client.sheets)
+            if (!gapi.auth2 || !gapi.client.sheets)
               return;
             gapi.auth2.init({
               'client_id': this.google.clientId,
               'scope': this.google.scopes.join(' '),
-            }).then(function(){
+            }).then(function () {
               this.google.auth2 = gapi.auth2.getAuthInstance();
               this.google.auth2.isSignedIn.listen(this.googleUpdateSigninStatus);
               this.google.auth2.currentUser.listen(this.googleHandleUser);
@@ -226,7 +236,7 @@
           googleHandleUser(user) {
             try {
               this.loading(1);
-              if(!user.isSignedIn()) {
+              if (!user.isSignedIn()) {
                 this.loading(-1);
                 return;
               }
@@ -235,7 +245,7 @@
               this.google.email = BasicProfile.getEmail();
               this.punchTableReload();
               this.loading(-1);
-            } catch(e) {
+            } catch (e) {
               this.errors.push(e.message);
               this.loading(-1);
             }
@@ -245,62 +255,65 @@
             gapi.client.sheets.spreadsheets.values.batchGet({
               spreadsheetId: this.spreadsheet.id,
               ranges: ["'冒險時刻'!B1:1", "'冒險時刻'!A3"],
-            }).then(function(response) {
+            }).then(function (response) {
               var ranges = response.result.valueRanges;
-              this.spreadsheet.names = ranges[0].values[0].filter(function(val){return val.length>0});
+              this.spreadsheet.names = ranges[0].values[0].filter(function (val) { return val.length > 0 });
               this.date.start = moment(ranges[1].values[0][0], 'YYYY/M/D');
-              if(this.punchRange.length == 0)
+              if (this.punchRange.length == 0)
                 return this;
               // get punch cell data
               gapi.client.sheets.spreadsheets.values.batchGet({
                 spreadsheetId: this.spreadsheet.id,
-                ranges: ["'冒險時刻'!"+this.punchRange[0], "'冒險時刻'!"+this.punchRange[1]],
-              }).then(function(response){
+                ranges: ["'冒險時刻'!" + this.punchRange[0], "'冒險時刻'!" + this.punchRange[1]],
+              }).then(function (response) {
                 var ranges = response.result.valueRanges;
                 // console.log(ranges);
-                for(var i=0; i<2; i++)
+                for (var i = 0; i < 2; i++)
                   this.$set(this.spreadsheet.punch, i, _.get(ranges[i].values, [0, 0], ''));
                 this.loading(-1);
-              }.bind(this), function(response) { // error
+              }.bind(this), function (response) { // error
                 this.errors.push('無法寫入冒險時刻表: ' + response.result.error.message);
                 this.loading(-1);
               }.bind(this));
-            }.bind(this), function(response) { // error
+            }.bind(this), function (response) { // error
               this.errors.push('無法讀取冒險時刻表: ' + response.result.error.message);
               this.loading(-1);
             }.bind(this));
           },
           punch(i) {
-            if(this.spreadsheet.punch[i] && !confirm('已經打卡過了，確定覆蓋？'))
+            if (this.spreadsheet.punch[i] && !confirm('已經打卡過了，確定覆蓋？'))
               return this;
             this.loading(1);
             let now = moment();
             gapi.client.sheets.spreadsheets.values.update({
               spreadsheetId: this.spreadsheet.id,
               range: [this.punchRange[i]],
-              valueInputOption: 'RAW',
-              values: [[ (now.hour() < 12? '上午 ' : '下午 ') + now.format('h:mm:ss') ]],
-            }).then(function() {
+              valueInputOption: 'USER_ENTERED',
+              values: [[this.formatTime(now)]],
+            }).then(function () {
               this.punchTableReload();
               this.loading(-1);
             }.bind(this));
           },
           int2ref(num) {
             var ref = '';
-            while(num > 0) {
+            while (num > 0) {
               num--;
-              ref = String.fromCharCode(65 + num%26) + ref;
-              num = Math.floor(num/26);
+              ref = String.fromCharCode(65 + num % 26) + ref;
+              num = Math.floor(num / 26);
             }
             return ref;
           },
+          formatTime(m) {
+            return (m.hour() < 12 ? '上午 ' : '下午 ') + m.format('h:mm:ss')
+          }
         },
       });
       function gapi_onload() {
         vm.googleOnload();
       }
-      (function($){
-        $(function(){
+      (function ($) {
+        $(function () {
           $.blockUI.defaults.message = $('#loading');
           $.blockUI.defaults.css = {
             padding: 0,

@@ -97,7 +97,7 @@
           </tr>
           <tr v-if="punchRange.length">
             <td class="text-center" colspan="2">{{ offWorkHint }}</td>
-            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px; padding: 10px 0">{{ (date.now.hour() < 12? '上午 ' : '下午 ') + date.now.format('h:mm:ss') }}</button></td>
+            <td><button class="btn btn-link btn-lg btn-block disabled" style="letter-spacing: -1px; padding: 10px 0">{{ formatTime(date.now) }}</button></td>
           </tr>
         </table>
       </div>
@@ -112,9 +112,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
     <script type="text/javascript">
       'use strict';
       let vm = new Vue({
@@ -138,7 +138,7 @@
               now: moment(),
             },
             spreadsheet: {
-              id: '18ZLCiOgUfOHPrTkWLfWS_iwOhul6BiDfZcE4OnW6J3Q', // test
+              id: '1ymCPf3RPPFnuSSsvEL6fq2hQXosxdDPuSYQk4r2LhI4', // test
               // id: '1vd4u_xjKUeiSiunoUSIRkWaAtDV2wbyFWg8CTHJWsFY', // prod
               punch: ['', ''], // 上班, 下班
               names: [],
@@ -159,7 +159,7 @@
             let dateOffWork = moment(punchIn, 'A hh:mm:ss').add(8, 'h');
             if (punchIn[0] === '上') dateOffWork.add(90, 'm');
             if (dateOffWork > this.date.now)
-              return '預計於 ' + dateOffWork.from(this.date.now) + ' 可以打卡下班。';
+              return '大約 ' + dateOffWork.from(this.date.now) + '可以下班';
             else return '已經可以下班囉！';
           },
           punchRange() {
@@ -175,9 +175,18 @@
         },
         mounted() {
           moment.locale("zh-tw");
+          moment.relativeTimeThreshold('s', 60);
+          moment.relativeTimeThreshold('m', 60);
+          moment.relativeTimeThreshold('h', 24);
+          moment.relativeTimeThreshold('ss', -1);
+          moment.updateLocale('zh-tw', {
+            relativeTime: {
+              ss: '%d 秒'
+            }
+          });
           window.setInterval(() => {
             this.date.now = moment()
-          }, 1000)
+          }, 1000);
         },
         methods: {
           loading(diff) {
@@ -278,8 +287,8 @@
             gapi.client.sheets.spreadsheets.values.update({
               spreadsheetId: this.spreadsheet.id,
               range: [this.punchRange[i]],
-              valueInputOption: 'RAW',
-              values: [[ (now.hour() < 12? '上午 ' : '下午 ') + now.format('h:mm:ss') ]],
+              valueInputOption: 'USER_ENTERED',
+              values: [[ this.formatTime(now) ]],
             }).then(function() {
               this.punchTableReload();
               this.loading(-1);
@@ -294,6 +303,9 @@
             }
             return ref;
           },
+          formatTime(m) {
+            return (m.hour() < 12 ? '上午 ' : '下午 ') + m.format('h:mm:ss')
+          }
         },
       });
       function gapi_onload() {
